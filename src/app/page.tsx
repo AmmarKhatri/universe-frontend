@@ -1,7 +1,8 @@
-import Image from "next/image";
+'use client'
+import HomeNavBar from "@/components/homeNavBar";
 
 export default function Home() {
       return (
-      <></>
+        <HomeNavBar/>
       )
 }
