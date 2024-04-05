@@ -2,7 +2,7 @@ export default function SignIn(){
     return(
     <>
           <div className="flex min-h-full h-screen bg-white flex-1">
-            <div className="flex flex-1 flex-col justify-center px-4 py-12 sm:px-6 lg:flex-none lg:px-20 xl:px-24">
+            <div className="flex flex-1 flex-col justify-center px-4 py-8 sm:px-6 lg:flex-none lg:px-20 xl:px-24">
               <div className="mx-auto w-full max-w-sm lg:w-96">
                 <div>
                   <img
@@ -10,12 +10,12 @@ export default function SignIn(){
                     src="/universe0logo.webp"
                     alt="Universe"
                   />
-                  <h2 className="mt-8 text-2xl font-bold leading-9 tracking-tight text-gray-900">
+                  <h2 className="mt-4 text-2xl font-bold leading-9 tracking-tight text-gray-900">
                     Sign in to your account
                   </h2>
                   <p className="mt-2 text-sm leading-6 text-gray-500">
                     Not a member?{' '}
-                    <a href="#" className="font-semibold text-gray-600 hover:text-gray-500">
+                    <a href="/signup" className="font-semibold text-gray-600 hover:text-gray-500">
                       Sign up now!
                     </a>
                   </p>
