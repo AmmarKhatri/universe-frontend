@@ -1,8 +1,10 @@
 import { Fragment } from 'react'
 import { Disclosure, Menu, Transition } from '@headlessui/react'
-import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline'
+import { Bars3Icon, BellIcon, EnvelopeIcon, PencilIcon, XMarkIcon } from '@heroicons/react/24/outline'
 import { PlusIcon } from '@heroicons/react/20/solid'
 import { ArrowRightIcon } from '@heroicons/react/16/solid'
+import { useState } from 'react'
+import Link from 'next/link'
 
 const user = {
   name: 'Tom Cook',
@@ -11,11 +13,11 @@ const user = {
     'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
 }
 const navigation = [
-  { name: 'Universe', href: '#', current: true },
-  { name: 'Team', href: '#', current: false },
-  { name: 'Services', href: '#', current: false },
-  { name: 'About Us', href: '#', current: false },
-  { name: 'Contact Us', href: '#', current: false },
+  { name: 'Universe', href: '#universe', current: true },
+  { name: 'Team', href: '#team', current: false },
+  { name: 'Services', href: '#services', current: false },
+  { name: 'About Us', href: '#about', current: false },
+  { name: 'Contact Us', href: '#contact', current: false },
 ]
 const userNavigation = [
   { name: 'Your Profile', href: '#' },
@@ -26,8 +28,12 @@ const userNavigation = [
 function classNames(...classes: any) {
   return classes.filter(Boolean).join(' ')
 }
+function fetchProfile(){
+  //TODO: Implement fetching of profile to get image of signed in user
+}
 
 export default function HomeNavBar() {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   return (
     <Disclosure as="nav" className="bg-gray-900">
       {({ open }) => (
@@ -72,7 +78,27 @@ export default function HomeNavBar() {
               </div>
               <div className="flex items-center">
                 
-                <div className="hidden md:ml-4 md:flex md:flex-shrink-0 md:items-center">
+                {
+                  !isLoggedIn ? 
+                  <div className='hidden md:ml-4 md:flex md:flex-shrink-0 md:items-center'>
+                    <div className="flex-shrink-0">
+                    <button
+                      type="button"
+                      className="relative inline-flex items-center gap-x-1.5 ml-6 rounded-md bg-gray-500 px-5 py-2 text-sm font-semibold text-white shadow-sm hover:bg-gray-100 hover:text-black focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-500"
+                    >
+                      <Link href={"/signin"}>Sign In</Link>
+                    </button>
+                  </div>
+                    <div className="flex-shrink-0">
+                      <button
+                        type="button"
+                        className="relative inline-flex items-center gap-x-1.5 ml-6 rounded-md bg-gray-100 px-3 py-2 text-sm font-semibold text-black shadow-sm hover:bg-gray-800 hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-500"
+                      >
+                        <Link href={"/signup"}>Sign Up</Link>
+                        </button>
+                    </div>
+                  </div>:
+                  <><div className="hidden md:ml-4 md:flex md:flex-shrink-0 md:items-center">
 
                   {/* Profile dropdown */}
                   <Menu as="div" className="relative ml-3">
@@ -117,10 +143,11 @@ export default function HomeNavBar() {
                     type="button"
                     className="relative inline-flex items-center gap-x-1.5 ml-6 rounded-md bg-gray-500 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-gray-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-500"
                   >
-                    Dashboard
+                    <Link href={"/dashboard"}>Dashboard</Link>
                     <ArrowRightIcon className="-ml-0.5 h-5 w-5" aria-hidden="true" />
                   </button>
-                </div>
+                </div></>
+                }
               </div>
             </div>
           </div>
