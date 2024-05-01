@@ -4,6 +4,8 @@ import React, { useState } from "react";
 import axios from 'axios';
 import RoleSelect from "@/components/roleSelect";
 import { CalendarDate } from "@/components/ui/DatePicker";
+import { useToast } from "@/components/ui/use-toast";
+import { useRouter } from "next/navigation";
 
 // Define the list of roles
 const roles = [
@@ -16,12 +18,13 @@ const roles = [
 // Define the SignUp component
 export default function SignUp() {
   // State variables
+  const {toast} = useToast();
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [dateOfBirth, setDateOfBirth] = useState<Date | null>(null);
   const [selectedRole, setSelectedRole] = useState(roles[3]);
-
+  const router = useRouter();
   // Event handlers
   const handleUsernameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setUsername(event.target.value);
@@ -47,9 +50,35 @@ export default function SignUp() {
     axios.post(`${process.env.NEXT_PUBLIC_APIURL}/users/register`, requestBody)
       .then(response => {
         console.log("Sign up successful:", response.data);
+        if (response.data.error == 0){
+          toast({
+            title: "Registered!",
+            description: response.data.message,
+          })
+          //successfully route to login
+          router.push('/signin')
+        } else {
+          toast({
+            title: "Could not register",
+            description: response.data.message,
+          })
+        }
       })
       .catch(error => {
         console.error("Error signing up:", error);
+        if (error.response.data.error == 1){
+          toast({
+            title: "Error",
+            variant: "destructive",
+            description: error.response.data.message,
+          })
+        } else {
+          toast({
+            title: "Internal Server Error",
+            variant: "destructive",
+            description: "Something is wrong with the server",
+          })
+        }
       });
   };
 

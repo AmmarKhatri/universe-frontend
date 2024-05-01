@@ -1,4 +1,60 @@
+"use client";
+import { useToast } from "@/components/ui/use-toast";
+import axios from "axios";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 export default function SignIn(){
+  const router = useRouter();
+  const {toast} = useToast()
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const handleEmailChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setEmail(event.target.value);
+  };
+
+  const handlePasswordChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setPassword(event.target.value);
+  };
+  const handleSignIn = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const requestBody = {
+      email,
+      password,
+    };
+    axios.post(`${process.env.NEXT_PUBLIC_APIURL}/users/login`, requestBody)
+      .then(response => {
+        console.log("Sign up successful:", response.data);
+        if (response.data.error == 0){
+          toast({
+            title: "Signed In!",
+            description: "Welcome Back! User",
+          })
+          //successfully route to login
+          router.push('/dashboard')
+        } else {
+          toast({
+            title: "Could not login",
+            description: response.data.message,
+          })
+        }
+      })
+      .catch(error => {
+        console.error("Error signing up:", error);
+        if (error.response.data.error == 1){
+          toast({
+            title: "Error",
+            variant: "destructive",
+            description: error.response.data.message,
+          })
+        } else {
+          toast({
+            title: "Internal Server Error",
+            variant: "destructive",
+            description: "Something is wrong with the server",
+          })
+        }
+      });
+    };
     return(
     <>
           <div className="flex min-h-full h-screen bg-white flex-1">
@@ -23,7 +79,7 @@ export default function SignIn(){
     
                 <div className="mt-10">
                   <div>
-                    <form action="#" method="POST" className="space-y-6">
+                    <form action="#" method="POST" onSubmit={handleSignIn} className="space-y-6">
                       <div>
                         <label htmlFor="email" className="block text-sm font-medium leading-6 text-gray-900">
                           Email address
@@ -35,7 +91,8 @@ export default function SignIn(){
                             type="email"
                             autoComplete="email"
                             required
-                            className="block w-full rounded-md border-0 py-1.5 shadow-sm ring-1 ring-inset text-black ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-gray-600 sm:text-sm sm:leading-6"
+                            onChange={handleEmailChange}
+                            className="block w-full px-2 rounded-md border-0 py-1.5 shadow-sm ring-1 ring-inset text-black ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-gray-600 sm:text-sm sm:leading-6"
                           />
                         </div>
                       </div>
@@ -51,7 +108,8 @@ export default function SignIn(){
                             type="password"
                             autoComplete="current-password"
                             required
-                            className="block w-full rounded-md border-0 py-1.5 shadow-sm ring-1 ring-inset text-black ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-gray-600 sm:text-sm sm:leading-6"
+                            onChange={handlePasswordChange}
+                            className="block w-full px-2 rounded-md border-0 py-1.5 shadow-sm ring-1 ring-inset text-black ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-gray-600 sm:text-sm sm:leading-6"
                           />
                         </div>
                       </div>
