@@ -48,7 +48,7 @@ export default function SignUp() {
       role: selectedRole.id
     };
     axios.post(`${process.env.NEXT_PUBLIC_APIURL}/users/register`, requestBody)
-      .then(response => {
+      .then((response: { data: any; }) => {
         console.log("Sign up successful:", response.data);
         if (response.data.error == 0){
           toast({
@@ -64,7 +64,7 @@ export default function SignUp() {
           })
         }
       })
-      .catch(error => {
+      .catch((error: any) => {
         console.error("Error signing up:", error);
         if (error.response.data.error == 1){
           toast({
