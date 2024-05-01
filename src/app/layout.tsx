@@ -2,7 +2,9 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
 import type { Metadata } from "next";
-
+import { ReduxProvider } from "./redux/ReduxProvider";
+import { PersistGate } from "redux-persist/integration/react";
+import { persistor } from "./redux/store";
 const inter = Inter({ subsets: ["latin"] });
 export const metadata: Metadata = {
   title: "Universe",
@@ -16,8 +18,12 @@ export default function RootLayout({
   return (
     <html lang="en" className="h-full bg-white">
       <body className={inter.className}>
-        {children}
-        <Toaster/>
+        <ReduxProvider>
+          <PersistGate loading={null} persistor={persistor}>
+          {children}
+          <Toaster/>
+          </PersistGate>
+        </ReduxProvider>
       </body>
     </html>
   );

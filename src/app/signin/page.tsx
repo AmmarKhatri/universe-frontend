@@ -3,11 +3,14 @@ import { useToast } from "@/components/ui/use-toast";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { UseDispatch, useDispatch } from "react-redux";
+import { loginUser } from "../redux/states/userReducer";
 export default function SignIn(){
   const router = useRouter();
   const {toast} = useToast()
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const dispatch = useDispatch();
   const handleEmailChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setEmail(event.target.value);
   };
@@ -29,6 +32,7 @@ export default function SignIn(){
             title: "Signed In!",
             description: "Welcome Back! User",
           })
+          dispatch(loginUser({access_token: response.data.access_token, refresh_token: response.data.refresh_token}));
           //successfully route to login
           router.push('/dashboard')
         } else {
