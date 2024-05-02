@@ -19,10 +19,8 @@ export default function RootLayout({
     <html lang="en" className="h-full bg-white">
       <body className={inter.className}>
         <ReduxProvider>
-          <PersistGate loading={null} persistor={persistor}>
           {children}
           <Toaster/>
-          </PersistGate>
         </ReduxProvider>
       </body>
     </html>
