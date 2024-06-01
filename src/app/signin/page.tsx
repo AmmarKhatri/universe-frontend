@@ -37,7 +37,8 @@ export default function SignIn(){
           router.push('/dashboard')
         } else {
           toast({
-            title: "Could not login",
+            title: "Error",
+            variant: "destructive",
             description: response.data.message,
           })
         }

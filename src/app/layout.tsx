@@ -3,8 +3,7 @@ import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
 import type { Metadata } from "next";
 import { ReduxProvider } from "./redux/ReduxProvider";
-import { PersistGate } from "redux-persist/integration/react";
-import { persistor } from "./redux/store";
+
 const inter = Inter({ subsets: ["latin"] });
 export const metadata: Metadata = {
   title: "Universe",
