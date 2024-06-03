@@ -1,6 +1,3 @@
-import { toast } from "@/components/ui/use-toast";
-import { Dispatch } from "@reduxjs/toolkit";
-import { throws } from "assert";
 import axios from "axios"
 export default function FetchUserCommunities(token: string, setCommunities: any){
     axios.get(`${process.env.NEXT_PUBLIC_APIURL}/communities/user`, {
@@ -18,6 +15,7 @@ export default function FetchUserCommunities(token: string, setCommunities: any)
             for(let i = 0; i < comm.length; i++){
                 let c = {
                     id: i,
+                    commid: comm[i]._id,
                     name: comm[i].name,
                     initial: comm[i].name[0],
                     current: false,

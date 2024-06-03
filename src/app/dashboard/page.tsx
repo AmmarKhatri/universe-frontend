@@ -2,7 +2,6 @@
 import { useSelector } from "react-redux";
 import { RootState } from "../redux/store";
 import { useRouter } from "next/navigation";
-import UserDashboard from "./userDashboard";
 
 export default function Dashboard(){
     const user = useSelector((state: RootState) => state.user);
@@ -18,6 +17,6 @@ export default function Dashboard(){
         </>);
     } else {
         // PUSH TO USER DASHBOARD
-        return(<UserDashboard user={user}/>);
+        router.push('/communities')
     }
 }

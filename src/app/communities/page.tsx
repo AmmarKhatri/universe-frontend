@@ -1,4 +1,5 @@
-import { Fragment, useEffect, useState } from 'react'
+'use client'
+import { useEffect, useState } from 'react'
 import {
   Dialog,
   DialogPanel,
@@ -12,20 +13,15 @@ import {
 import {
   Bars3Icon,
   Cog6ToothIcon,
-  GlobeAltIcon,
   PlusIcon,
   XMarkIcon,
 } from '@heroicons/react/24/outline'
 import { ChevronDownIcon, MagnifyingGlassIcon } from '@heroicons/react/20/solid'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { logoutUser } from '../redux/states/userReducer'
 import FetchUserCommunities from '@/calls/fetchUserCommunities'
 import { toast } from '@/components/ui/use-toast'
-
-const navigation = [
-  { name: 'GENERAL', href: '#', icon: GlobeAltIcon, current: true },
-  // { name: 'Team', href: '#', icon: UsersIcon, current: false },
-]
+import { RootState } from '../redux/store'
 
 
 function classNames(...classes: any) {
@@ -34,13 +30,9 @@ function classNames(...classes: any) {
 
 export default function UserDashboard(props: any) {
   const dispatch = useDispatch();
-  const [communities, setCommunities] = useState<any>([
-    { id: 1, name: 'Heroicons', href: '#', initial: 'H', current: false },
-    // { id: 2, name: 'Tailwind Labs', href: '#', initial: 'T', current: false },
-    // { id: 3, name: 'Workcation', href: '#', initial: 'W', current: false },
-  ]);
+  const user = useSelector((state: RootState) => state.user);
+  const [communities, setCommunities] = useState<any>([]);
   const [sidebarOpen, setSidebarOpen] = useState(false)
-  const user = props.user
   function handleSignOut(): void {
     dispatch(logoutUser())
   }
@@ -106,7 +98,7 @@ export default function UserDashboard(props: any) {
                     </div>
                     <nav className="flex flex-1 flex-col">
                       <ul role="list" className="flex flex-1 flex-col gap-y-7">
-                        <li>
+                        {/* <li>
                           <ul role="list" className="-mx-2 space-y-1">
                             {navigation.map((item) => (
                               <li key={item.name}>
@@ -125,7 +117,7 @@ export default function UserDashboard(props: any) {
                               </li>
                             ))}
                           </ul>
-                        </li>
+                        </li> */}
                         <li>
                           <div className="text-xs font-semibold leading-6 text-gray-400">Your communities</div>
                           <ul role="list" className="-mx-2 mt-2 space-y-1">
@@ -180,7 +172,7 @@ export default function UserDashboard(props: any) {
             </div>
             <nav className="flex flex-1 flex-col">
               <ul role="list" className="flex flex-1 flex-col gap-y-7">
-                <li>
+                {/* <li>
                   <ul role="list" className="-mx-2 space-y-1">
                     {navigation.map((item) => (
                       <li key={item.name}>
@@ -199,7 +191,7 @@ export default function UserDashboard(props: any) {
                       </li>
                     ))}
                   </ul>
-                </li>
+                </li> */}
                 <li>
                   <div className="text-xs font-semibold leading-6 text-gray-400">Your communities</div>
                   <ul role="list" className="-mx-2 mt-2 space-y-1">
