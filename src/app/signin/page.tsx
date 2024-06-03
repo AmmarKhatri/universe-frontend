@@ -32,9 +32,26 @@ export default function SignIn(){
             title: "Signed In!",
             description: "Welcome Back! User",
           })
-          dispatch(loginUser({access_token: response.data.access_token, refresh_token: response.data.refresh_token}));
-          //successfully route to login
-          router.push('/dashboard')
+          // fetching user details
+          axios.get(`${process.env.NEXT_PUBLIC_APIURL}/users/`, {
+            headers:{
+                "Authorization": "Bearer "+ response.data.access_token
+            }
+            })
+            .then(userResponse => {
+                console.log("User fetch successful:", userResponse.data);
+                if (response.data.error == 0){
+                    console.log("Setting successful", userResponse.data)
+                    dispatch(loginUser({access_token: response.data.access_token, refresh_token: response.data.refresh_token, user: userResponse.data.user}));
+                    //successfully route to login
+                    router.push('/dashboard')
+                } else {
+                    console.log("Error setting username")
+                }
+            })
+            .catch(error => {
+                console.error("Error signing up:", error);
+            });
         } else {
           toast({
             title: "Error",
