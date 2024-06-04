@@ -2,6 +2,7 @@
 import { useSelector } from "react-redux";
 import { RootState } from "../redux/store";
 import { useRouter } from "next/navigation";
+import AdminDashboard from "./adminDashboard";
 
 export default function Dashboard(){
     const user = useSelector((state: RootState) => state.user);
@@ -12,9 +13,9 @@ export default function Dashboard(){
     }
     if (user.role == "ADMIN" || user.role == "SUPERADMIN"){
         // PUSH TO ADMIN DASHBOARD
-        return (<>
-            Admin dashboard
-        </>);
+        return (
+            <AdminDashboard />
+        );
     } else {
         // PUSH TO USER DASHBOARD
         router.push('/communities')
