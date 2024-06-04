@@ -1,5 +1,5 @@
 'use client'
-import { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react';
 import {
   Dialog,
   DialogPanel,
@@ -9,43 +9,61 @@ import {
   MenuItems,
   Transition,
   TransitionChild,
-} from '@headlessui/react'
+} from '@headlessui/react';
 import {
   Bars3Icon,
   Cog6ToothIcon,
   PlusIcon,
   XMarkIcon,
-} from '@heroicons/react/24/outline'
-import { ChevronDownIcon, MagnifyingGlassIcon } from '@heroicons/react/20/solid'
-import { useDispatch, useSelector } from 'react-redux'
-import { logoutUser } from '../redux/states/userReducer'
-import FetchUserCommunities from '@/calls/fetchUserCommunities'
-import { toast } from '@/components/ui/use-toast'
-import { RootState } from '../redux/store'
+} from '@heroicons/react/24/outline';
+import { ChevronDownIcon, MagnifyingGlassIcon } from '@heroicons/react/20/solid';
+import { useDispatch, useSelector } from 'react-redux';
+import { logoutUser } from '../redux/states/userReducer';
+import FetchUserCommunities from '@/calls/fetchUserCommunities';
+import { toast } from '@/components/ui/use-toast';
+import { RootState } from '../redux/store';
+import Postings from '../../components/postings';
 
-
-function classNames(...classes: any) {
-  return classes.filter(Boolean).join(' ')
+function classNames(...classes:any) {
+  return classes.filter(Boolean).join(' ');
 }
 
-export default function UserDashboard(props: any) {
+export default function UserDashboard() {
   const dispatch = useDispatch();
-  const user = useSelector((state: RootState) => state.user);
   const [communities, setCommunities] = useState<any>([]);
-  const [sidebarOpen, setSidebarOpen] = useState(false)
-  function handleSignOut(): void {
-    dispatch(logoutUser())
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [selectedCommunity, setSelectedCommunity] = useState<any>(null);
+  const user = useSelector((state: RootState) => state.user);
+
+  function handleSignOut() {
+    dispatch(logoutUser());
   }
-  useEffect(()=>{
-    try{
-      FetchUserCommunities(user.access_token, setCommunities)
-    } catch(err){
+
+  useEffect(() => {
+    try {
+      FetchUserCommunities(user.access_token, (fetchedCommunities: any) => {
+        setCommunities(fetchedCommunities);
+        if (fetchedCommunities.length > 0) {
+          setSelectedCommunity(fetchedCommunities[0]); // Set the first community as selected
+        }
+      });
+    } catch (err) {
       toast({
         title: "Error",
         description: "Could not set communities",
-      })
+      });
     }
-  }, [])
+  }, [user.access_token]);
+
+  const handleCommunitySelect = (community: any) => {
+    setSelectedCommunity(community);
+    setCommunities(
+      communities.map((c:any) =>
+        c.commid === community.commid ? { ...c, current: true } : { ...c, current: false }
+      )
+    );
+  };
+
   return (
     <>
       <div>
@@ -87,7 +105,7 @@ export default function UserDashboard(props: any) {
                       </button>
                     </div>
                   </TransitionChild>
-                  {/* Sidebar component, swap this element with another sidebar if you like */}
+
                   <div className="flex grow flex-col gap-y-5 overflow-y-auto bg-gray-900 px-6 pb-4 ring-1 ring-white/10">
                     <div className="flex h-16 shrink-0 items-center">
                       <img
@@ -98,33 +116,14 @@ export default function UserDashboard(props: any) {
                     </div>
                     <nav className="flex flex-1 flex-col">
                       <ul role="list" className="flex flex-1 flex-col gap-y-7">
-                        {/* <li>
-                          <ul role="list" className="-mx-2 space-y-1">
-                            {navigation.map((item) => (
-                              <li key={item.name}>
-                                <a
-                                  href={item.href}
-                                  className={classNames(
-                                    item.current
-                                      ? 'bg-gray-800 text-white'
-                                      : 'text-gray-400 hover:text-white hover:bg-gray-800',
-                                    'group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold'
-                                  )}
-                                >
-                                  <item.icon className="h-6 w-6 shrink-0" aria-hidden="true" />
-                                  {item.name}
-                                </a>
-                              </li>
-                            ))}
-                          </ul>
-                        </li> */}
                         <li>
                           <div className="text-xs font-semibold leading-6 text-gray-400">Your communities</div>
                           <ul role="list" className="-mx-2 mt-2 space-y-1">
                             {communities.map((community: any) => (
-                              <li key={community.name}>
+                              <li key={community.commid}>
                                 <a
-                                  href={community.href}
+                                  href="#"
+                                  onClick={() => handleCommunitySelect(community)}
                                   className={classNames(
                                     community.current
                                       ? 'bg-gray-800 text-white'
@@ -143,11 +142,11 @@ export default function UserDashboard(props: any) {
                         </li>
                         <li className="mt-auto">
                           <a
-                            href="#"
+                            href="/communities/manage"
                             className="group -mx-2 flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-gray-400 hover:bg-gray-800 hover:text-white"
                           >
                             <Cog6ToothIcon className="h-6 w-6 shrink-0" aria-hidden="true" />
-                            Settings
+                            Manage Communities
                           </a>
                         </li>
                       </ul>
@@ -159,9 +158,7 @@ export default function UserDashboard(props: any) {
           </Dialog>
         </Transition>
 
-        {/* Static sidebar for desktop */}
         <div className="hidden lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-72 lg:flex-col">
-          {/* Sidebar component, swap this element with another sidebar if you like */}
           <div className="flex grow flex-col gap-y-5 overflow-y-auto bg-gray-900 px-6 pb-4">
             <div className="flex h-16 shrink-0 items-center">
               <img
@@ -172,33 +169,14 @@ export default function UserDashboard(props: any) {
             </div>
             <nav className="flex flex-1 flex-col">
               <ul role="list" className="flex flex-1 flex-col gap-y-7">
-                {/* <li>
-                  <ul role="list" className="-mx-2 space-y-1">
-                    {navigation.map((item) => (
-                      <li key={item.name}>
-                        <a
-                          href={item.href}
-                          className={classNames(
-                            item.current
-                              ? 'bg-gray-800 text-white'
-                              : 'text-gray-400 hover:text-white hover:bg-gray-800',
-                            'group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold'
-                          )}
-                        >
-                          <item.icon className="h-6 w-6 shrink-0" aria-hidden="true" />
-                          {item.name}
-                        </a>
-                      </li>
-                    ))}
-                  </ul>
-                </li> */}
                 <li>
                   <div className="text-xs font-semibold leading-6 text-gray-400">Your communities</div>
                   <ul role="list" className="-mx-2 mt-2 space-y-1">
                     {communities.map((community: any) => (
-                      <li key={community.name}>
+                      <li key={community.commid}>
                         <a
-                          href={community.href}
+                          href="#"
+                          onClick={() => handleCommunitySelect(community)}
                           className={classNames(
                             community.current
                               ? 'bg-gray-800 text-white'
@@ -217,11 +195,11 @@ export default function UserDashboard(props: any) {
                 </li>
                 <li className="mt-auto">
                   <a
-                    href="#"
+                    href="/communities/manage"
                     className="group -mx-2 flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-gray-400 hover:bg-gray-800 hover:text-white"
                   >
-                    <PlusIcon className="h-6 w-6 shrink-0" aria-hidden="true" />
-                    Join Communities
+                    <Cog6ToothIcon className="h-6 w-6 shrink-0" aria-hidden="true" />
+                    Manage Communities
                   </a>
                 </li>
               </ul>
@@ -236,7 +214,6 @@ export default function UserDashboard(props: any) {
               <Bars3Icon className="h-6 w-6" aria-hidden="true" />
             </button>
 
-            {/* Separator */}
             <div className="h-6 w-px bg-gray-900/10 lg:hidden" aria-hidden="true" />
 
             <div className="flex flex-1 gap-x-4 self-stretch lg:gap-x-6">
@@ -257,11 +234,8 @@ export default function UserDashboard(props: any) {
                 />
               </form>
               <div className="flex items-center gap-x-4 lg:gap-x-6">
-
-                {/* Separator */}
                 <div className="hidden lg:block lg:h-6 lg:w-px lg:bg-gray-900/10" aria-hidden="true" />
 
-                {/* Profile dropdown */}
                 <Menu as="div" className="relative">
                   <MenuButton className="-m-1.5 flex items-center p-1.5">
                     <span className="sr-only">Open user menu</span>
@@ -286,33 +260,33 @@ export default function UserDashboard(props: any) {
                     leaveTo="transform opacity-0 scale-95"
                   >
                     <MenuItems className="absolute right-0 z-10 mt-2.5 w-32 origin-top-right rounded-md bg-white py-2 shadow-lg ring-1 ring-gray-900/5 focus:outline-none">
-                        <MenuItem key={"Your profile"}>
-                          {({ focus }: any) => (
-                            <a
-                              href={"/profile"}
-                              className={classNames(
-                                focus ? 'bg-gray-50' : '',
-                                'block px-3 py-1 text-sm leading-6 text-gray-900'
-                              )}
-                            >
-                              {"Your profile"}
-                            </a>
-                          )}
-                          </MenuItem>
-                          <MenuItem key={"Sign out"}>
-                          {({ focus }: any) => (
-                            <a
-                              onClick={handleSignOut}
-                              href='/signin'
-                              className={classNames(
-                                focus ? 'bg-gray-50' : '',
-                                'block px-3 py-1 text-sm leading-6 text-gray-900'
-                              )}
-                            >
-                              {"Sign out"}
-                            </a>
-                          )}
-                        </MenuItem>
+                      <MenuItem key={"Your profile"}>
+                        {({ focus }) => (
+                          <a
+                            href={"/profile"}
+                            className={classNames(
+                              focus ? 'bg-gray-50' : '',
+                              'block px-3 py-1 text-sm leading-6 text-gray-900'
+                            )}
+                          >
+                            {"Your profile"}
+                          </a>
+                        )}
+                      </MenuItem>
+                      <MenuItem key={"Sign out"}>
+                        {({ focus }) => (
+                          <a
+                            onClick={handleSignOut}
+                            href='/signin'
+                            className={classNames(
+                              focus ? 'bg-gray-50' : '',
+                              'block px-3 py-1 text-sm leading-6 text-gray-900'
+                            )}
+                          >
+                            {"Sign out"}
+                          </a>
+                        )}
+                      </MenuItem>
                     </MenuItems>
                   </Transition>
                 </Menu>
@@ -321,12 +295,20 @@ export default function UserDashboard(props: any) {
           </div>
 
           <main className="py-10">
-            <div className="px-4 sm:px-6 lg:px-8">{
-//content here
-            }</div>
+            <div className="px-4 sm:px-6 lg:px-8">
+              {/* Content here */}
+              {selectedCommunity && (
+                <div>
+                  <h1 className=' font-bold'>{selectedCommunity.name}</h1>
+                  <h1 className=' text-gray-500'>{selectedCommunity.description}</h1>
+                  {/* Add logic to fetch and display content based on selectedCommunity.commid */}
+                  <Postings commid={selectedCommunity.commid} token={user.access_token} userid={user.userid}/>
+                </div>
+              )}
+            </div>
           </main>
         </div>
       </div>
     </>
-  )
+  );
 }
