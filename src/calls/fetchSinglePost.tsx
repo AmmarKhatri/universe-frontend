@@ -1,6 +1,6 @@
 import axios from "axios";
 
-export default function FetchSinglePost(token: string, posts: any, setPost: any, post_id: any) {
+export default function FetchSinglePost(token: string, setPost: any, post_id: any) {
   axios
     .get(`${process.env.NEXT_PUBLIC_APIURL}/posts/${post_id}`, {
       headers: {
@@ -12,8 +12,7 @@ export default function FetchSinglePost(token: string, posts: any, setPost: any,
         throw new Error(response.data.message);
       } else {
         let post = response.data.post;
-        posts.push(post)
-        setPost(posts);
+        setPost(post);
         console.log(response.data);
       }
     })

@@ -1,5 +1,5 @@
 import axios from "axios"
-export default function FetchAllCommunities(token: string, setCommunities: any){
+export default function FetchAllCommunities(token: string, setCommunities: any, userId: string){
     axios.get(`${process.env.NEXT_PUBLIC_APIURL}/communities`, {
         headers:{
             "Authorization": "Bearer "+ token
@@ -18,7 +18,9 @@ export default function FetchAllCommunities(token: string, setCommunities: any){
                     name: c.name,
                     description: c.description,
                     moderators: c.moderators.map((m: any) => m.email),
+                    joined: c.participants.includes(userId),
                     createdBy: {
+                        _id: c.createdBy._id,
                         username: c.createdBy.username,
                         email: c.createdBy.email,
                     },
