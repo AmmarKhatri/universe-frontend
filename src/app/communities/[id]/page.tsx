@@ -49,6 +49,10 @@ export default function EachPost() {
     //window.location.reload();
   }
 
+  function loadMoreComments(event: any): void {
+    FetchPaginatedComments(user.access_token, comments, setComments, setPagination, id, (pagination.page + 1)*pagination.records_per_page, pagination.records_per_page);
+  }
+
   return (
     <div className="mt-4">
       <h1 className="sr-only">Recent question</h1>
@@ -247,6 +251,7 @@ export default function EachPost() {
       </ul>
     </div>
     </div>
+    {pagination.page + 1 < pagination.total_pages ? <button onClick={loadMoreComments} className="  mb-10 text-center hover:text-gray-200 text-gray-800"><p>Load more</p></button>: null}
     </div>
     
 

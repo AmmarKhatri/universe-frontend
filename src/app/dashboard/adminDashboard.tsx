@@ -71,7 +71,7 @@ export default function AdminDashboard(props: any) {
     try {
       if (currentTab === "List/View Communities") {
         // Fetch communities that this user is super admin of
-        FetchAllCommunities(user.access_token, setCommunities);
+        FetchAllCommunities(user.access_token, setCommunities, user.userid);
       } else if (currentTab === "List/View Users") {
         // Fetch all users
         FetchAllUsers(user.access_token, setUsers);
@@ -86,7 +86,7 @@ export default function AdminDashboard(props: any) {
 
   useEffect(() => {
     if (communityCreated) {
-      FetchAllCommunities(user.access_token, setCommunities);
+      FetchAllCommunities(user.access_token, setCommunities, user.userid);
       setCommunityCreated(false);
     }
   }, [communityCreated]);
@@ -96,7 +96,7 @@ export default function AdminDashboard(props: any) {
       // Archive community
       const archivedComm = await ArchiveCommunity(user.access_token, commId);
 
-      FetchAllCommunities(user.access_token, setCommunities);
+      FetchAllCommunities(user.access_token, setCommunities, user.userid);
       toast({
         title: "Success",
         description: "Community archived successfully",

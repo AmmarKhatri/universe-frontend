@@ -11,6 +11,7 @@ export default function FetchAllCommunities(token: string, setCommunities: any, 
         } else {
             console.log(response.data);
             const comm = response.data.communities
+            console.log(comm[0].moderators.email)
             const communities = comm.map((c: any, i: number) => {
                 return {
                     id: i,

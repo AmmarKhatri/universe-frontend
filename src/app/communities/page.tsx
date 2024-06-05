@@ -1,5 +1,5 @@
-'use client'
-import { useEffect, useState } from 'react';
+"use client";
+import { useEffect, useState } from "react";
 import {
   Dialog,
   DialogPanel,
@@ -9,23 +9,27 @@ import {
   MenuItems,
   Transition,
   TransitionChild,
-} from '@headlessui/react';
+} from "@headlessui/react";
 import {
   Bars3Icon,
   Cog6ToothIcon,
   PlusIcon,
   XMarkIcon,
-} from '@heroicons/react/24/outline';
-import { ChevronDownIcon, MagnifyingGlassIcon } from '@heroicons/react/20/solid';
-import { useDispatch, useSelector } from 'react-redux';
-import { logoutUser } from '../redux/states/userReducer';
-import FetchUserCommunities from '@/calls/fetchUserCommunities';
-import { toast } from '@/components/ui/use-toast';
-import { RootState } from '../redux/store';
-import Postings from '../../components/postings';
+} from "@heroicons/react/24/outline";
+import {
+  ChevronDownIcon,
+  MagnifyingGlassIcon,
+} from "@heroicons/react/20/solid";
+import { useDispatch, useSelector } from "react-redux";
+import { logoutUser } from "../redux/states/userReducer";
+import FetchUserCommunities from "@/calls/fetchUserCommunities";
+import { toast } from "@/components/ui/use-toast";
+import { RootState } from "../redux/store";
+import Postings from "../../components/postings";
+import CreatePostModal from "./components/createPost";
 
-function classNames(...classes:any) {
-  return classes.filter(Boolean).join(' ');
+function classNames(...classes: any) {
+  return classes.filter(Boolean).join(" ");
 }
 
 export default function UserDashboard() {
@@ -33,6 +37,9 @@ export default function UserDashboard() {
   const [communities, setCommunities] = useState<any>([]);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [selectedCommunity, setSelectedCommunity] = useState<any>(null);
+  const [createCommunityModalOpen, setCreateCommunityModalOpen] =
+    useState(false);
+  const [postCreated, setPostCreated] = useState(false);
   const user = useSelector((state: RootState) => state.user);
 
   function handleSignOut() {
@@ -58,8 +65,10 @@ export default function UserDashboard() {
   const handleCommunitySelect = (community: any) => {
     setSelectedCommunity(community);
     setCommunities(
-      communities.map((c:any) =>
-        c.commid === community.commid ? { ...c, current: true } : { ...c, current: false }
+      communities.map((c: any) =>
+        c.commid === community.commid
+          ? { ...c, current: true }
+          : { ...c, current: false }
       )
     );
   };
@@ -99,9 +108,16 @@ export default function UserDashboard() {
                     leaveTo="opacity-0"
                   >
                     <div className="absolute left-full top-0 flex w-16 justify-center pt-5">
-                      <button type="button" className="-m-2.5 p-2.5" onClick={() => setSidebarOpen(false)}>
+                      <button
+                        type="button"
+                        className="-m-2.5 p-2.5"
+                        onClick={() => setSidebarOpen(false)}
+                      >
                         <span className="sr-only">Close sidebar</span>
-                        <XMarkIcon className="h-6 w-6 text-white" aria-hidden="true" />
+                        <XMarkIcon
+                          className="h-6 w-6 text-white"
+                          aria-hidden="true"
+                        />
                       </button>
                     </div>
                   </TransitionChild>
@@ -117,24 +133,30 @@ export default function UserDashboard() {
                     <nav className="flex flex-1 flex-col">
                       <ul role="list" className="flex flex-1 flex-col gap-y-7">
                         <li>
-                          <div className="text-xs font-semibold leading-6 text-gray-400">Your communities</div>
+                          <div className="text-xs font-semibold leading-6 text-gray-400">
+                            Your communities
+                          </div>
                           <ul role="list" className="-mx-2 mt-2 space-y-1">
                             {communities.map((community: any) => (
                               <li key={community.commid}>
                                 <a
                                   href="#"
-                                  onClick={() => handleCommunitySelect(community)}
+                                  onClick={() =>
+                                    handleCommunitySelect(community)
+                                  }
                                   className={classNames(
                                     community.current
-                                      ? 'bg-gray-800 text-white'
-                                      : 'text-gray-400 hover:text-white hover:bg-gray-800',
-                                    'group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold'
+                                      ? "bg-gray-800 text-white"
+                                      : "text-gray-400 hover:text-white hover:bg-gray-800",
+                                    "group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold"
                                   )}
                                 >
                                   <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg border border-gray-700 bg-gray-800 text-[0.625rem] font-medium text-gray-400 group-hover:text-white">
                                     {community.initial}
                                   </span>
-                                  <span className="truncate">{community.name}</span>
+                                  <span className="truncate">
+                                    {community.name}
+                                  </span>
                                 </a>
                               </li>
                             ))}
@@ -142,10 +164,26 @@ export default function UserDashboard() {
                         </li>
                         <li className="mt-auto">
                           <a
+                            onClick={() => setCreateCommunityModalOpen(true)} // open modal on click
+                            href="#"
+                            className="group -mx-2 flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-gray-400 hover:bg-gray-800 hover:text-white"
+                          >
+                            <PlusIcon
+                              className="h-6 w-6 shrink-0"
+                              aria-hidden="true"
+                            />
+                            Create Post
+                          </a>
+                        </li>
+                        <li className="mt-auto">
+                          <a
                             href="/communities/manage"
                             className="group -mx-2 flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-gray-400 hover:bg-gray-800 hover:text-white"
                           >
-                            <Cog6ToothIcon className="h-6 w-6 shrink-0" aria-hidden="true" />
+                            <Cog6ToothIcon
+                              className="h-6 w-6 shrink-0"
+                              aria-hidden="true"
+                            />
                             Manage Communities
                           </a>
                         </li>
@@ -170,7 +208,9 @@ export default function UserDashboard() {
             <nav className="flex flex-1 flex-col">
               <ul role="list" className="flex flex-1 flex-col gap-y-7">
                 <li>
-                  <div className="text-xs font-semibold leading-6 text-gray-400">Your communities</div>
+                  <div className="text-xs font-semibold leading-6 text-gray-400">
+                    Your communities
+                  </div>
                   <ul role="list" className="-mx-2 mt-2 space-y-1">
                     {communities.map((community: any) => (
                       <li key={community.commid}>
@@ -179,9 +219,9 @@ export default function UserDashboard() {
                           onClick={() => handleCommunitySelect(community)}
                           className={classNames(
                             community.current
-                              ? 'bg-gray-800 text-white'
-                              : 'text-gray-400 hover:text-white hover:bg-gray-800',
-                            'group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold'
+                              ? "bg-gray-800 text-white"
+                              : "text-gray-400 hover:text-white hover:bg-gray-800",
+                            "group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold"
                           )}
                         >
                           <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg border border-gray-700 bg-gray-800 text-[0.625rem] font-medium text-gray-400 group-hover:text-white">
@@ -193,13 +233,27 @@ export default function UserDashboard() {
                     ))}
                   </ul>
                 </li>
+
                 <li className="mt-auto">
                   <a
                     href="/communities/manage"
                     className="group -mx-2 flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-gray-400 hover:bg-gray-800 hover:text-white"
                   >
-                    <Cog6ToothIcon className="h-6 w-6 shrink-0" aria-hidden="true" />
+                    <Cog6ToothIcon
+                      className="h-6 w-6 shrink-0"
+                      aria-hidden="true"
+                    />
                     Manage Communities
+                  </a>
+                </li>
+                <li className="mt-auto">
+                  <a
+                    onClick={() => setCreateCommunityModalOpen(true)} // open modal on click
+                    href="#"
+                    className="group -mx-2 flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-gray-400 hover:bg-gray-800 hover:text-white"
+                  >
+                    <PlusIcon className="h-6 w-6 shrink-0" aria-hidden="true" />
+                    Create Post
                   </a>
                 </li>
               </ul>
@@ -209,15 +263,26 @@ export default function UserDashboard() {
 
         <div className="lg:pl-72">
           <div className="sticky top-0 z-40 flex h-16 shrink-0 items-center gap-x-4 border-b border-gray-200 bg-white px-4 shadow-sm sm:gap-x-6 sm:px-6 lg:px-8">
-            <button type="button" className="-m-2.5 p-2.5 text-gray-700 lg:hidden" onClick={() => setSidebarOpen(true)}>
+            <button
+              type="button"
+              className="-m-2.5 p-2.5 text-gray-700 lg:hidden"
+              onClick={() => setSidebarOpen(true)}
+            >
               <span className="sr-only">Open sidebar</span>
               <Bars3Icon className="h-6 w-6" aria-hidden="true" />
             </button>
 
-            <div className="h-6 w-px bg-gray-900/10 lg:hidden" aria-hidden="true" />
+            <div
+              className="h-6 w-px bg-gray-900/10 lg:hidden"
+              aria-hidden="true"
+            />
 
             <div className="flex flex-1 gap-x-4 self-stretch lg:gap-x-6">
-              <form className="relative flex flex-1 my-2" action="#" method="GET">
+              <form
+                className="relative flex flex-1 my-2"
+                action="#"
+                method="GET"
+              >
                 <label htmlFor="search-field" className="sr-only">
                   Search
                 </label>
@@ -234,7 +299,10 @@ export default function UserDashboard() {
                 />
               </form>
               <div className="flex items-center gap-x-4 lg:gap-x-6">
-                <div className="hidden lg:block lg:h-6 lg:w-px lg:bg-gray-900/10" aria-hidden="true" />
+                <div
+                  className="hidden lg:block lg:h-6 lg:w-px lg:bg-gray-900/10"
+                  aria-hidden="true"
+                />
 
                 <Menu as="div" className="relative">
                   <MenuButton className="-m-1.5 flex items-center p-1.5">
@@ -245,10 +313,16 @@ export default function UserDashboard() {
                       alt=""
                     />
                     <span className="hidden lg:flex lg:items-center">
-                      <span className="ml-4 text-sm font-semibold leading-6 text-gray-900" aria-hidden="true">
+                      <span
+                        className="ml-4 text-sm font-semibold leading-6 text-gray-900"
+                        aria-hidden="true"
+                      >
                         {user.username}
                       </span>
-                      <ChevronDownIcon className="ml-2 h-5 w-5 text-gray-400" aria-hidden="true" />
+                      <ChevronDownIcon
+                        className="ml-2 h-5 w-5 text-gray-400"
+                        aria-hidden="true"
+                      />
                     </span>
                   </MenuButton>
                   <Transition
@@ -265,8 +339,8 @@ export default function UserDashboard() {
                           <a
                             href={"/profile"}
                             className={classNames(
-                              focus ? 'bg-gray-50' : '',
-                              'block px-3 py-1 text-sm leading-6 text-gray-900'
+                              focus ? "bg-gray-50" : "",
+                              "block px-3 py-1 text-sm leading-6 text-gray-900"
                             )}
                           >
                             {"Your profile"}
@@ -277,10 +351,10 @@ export default function UserDashboard() {
                         {({ focus }) => (
                           <a
                             onClick={handleSignOut}
-                            href='/signin'
+                            href="/signin"
                             className={classNames(
-                              focus ? 'bg-gray-50' : '',
-                              'block px-3 py-1 text-sm leading-6 text-gray-900'
+                              focus ? "bg-gray-50" : "",
+                              "block px-3 py-1 text-sm leading-6 text-gray-900"
                             )}
                           >
                             {"Sign out"}
@@ -299,13 +373,26 @@ export default function UserDashboard() {
               {/* Content here */}
               {selectedCommunity && (
                 <div>
-                  <h1 className=' font-bold'>{selectedCommunity.name}</h1>
-                  <h1 className=' text-gray-500'>{selectedCommunity.description}</h1>
+                  <h1 className=" font-bold">{selectedCommunity.name}</h1>
+                  <h1 className=" text-gray-500">
+                    {selectedCommunity.description}
+                  </h1>
                   {/* Add logic to fetch and display content based on selectedCommunity.commid */}
-                  <Postings commid={selectedCommunity.commid} token={user.access_token} userid={user.userid}/>
+                  <Postings
+                    commid={selectedCommunity.commid}
+                    token={user.access_token}
+                    userid={user.userid}
+                  />
                 </div>
               )}
             </div>
+            {selectedCommunity && (<CreatePostModal
+              isOpen={createCommunityModalOpen}
+              onClose={() => setCreateCommunityModalOpen(false)}
+              user={user}
+              commId={selectedCommunity.commid}
+              setPostCreated={setPostCreated} />
+            )}
           </main>
         </div>
       </div>
